@@ -4,8 +4,6 @@ const SYSTEM_PROMPT = `
 You are an assistant that receives a list of ingredients that a user has and suggests a recipe they could make with some or all of those ingredients. You don't need to use every ingredient they mention in your recipe. The recipe can include additional ingredients they didn't mention, but try not to include too many extra ingredients. Format your response in markdown to make it easier to render to a web page
 `
 
-const huggingFaceAccessToken = import.meta.env.VITE_HF_ACCESS_TOKEN
-
 // 🚨👉 ALERT: Read message below! You've been warned! 👈🚨
 // If you're following along on your local machine instead of
 // here on Scrimba, make sure you don't commit your API keys
@@ -17,12 +15,24 @@ const huggingFaceAccessToken = import.meta.env.VITE_HF_ACCESS_TOKEN
 // your API calls can be made. Doing so will keep your
 // API keys private.
 
-const hf = new HfInference(huggingFaceAccessToken)
+function getRuntimeAccessToken() {
+    const savedToken = window.localStorage.getItem('hf_access_token')
+    if (savedToken) {
+        return savedToken
+    }
+
+    const enteredToken = window.prompt('Enter your Hugging Face access token (starts with hf_):')?.trim()
+    if (!enteredToken) {
+        throw new Error('A Hugging Face access token is required to generate recipes.')
+    }
+
+    window.localStorage.setItem('hf_access_token', enteredToken)
+    return enteredToken
+}
 
 export async function getRecipeFromAI(ingredientsArr) {
-    if (!huggingFaceAccessToken) {
-        throw new Error("Missing VITE_HF_ACCESS_TOKEN in your .env file.")
-    }
+    const huggingFaceAccessToken = getRuntimeAccessToken()
+    const hf = new HfInference(huggingFaceAccessToken)
 
     const ingredientsString = ingredientsArr.join(", ")
     try {
