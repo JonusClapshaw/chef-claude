@@ -63,3 +63,16 @@ main {
     content: "+";
     margin-right: 5px;
 }
+
+.recipe-markdown {
+    margin-top: 24px;
+}
+
+.recipe-markdown h1,
+.recipe-markdown h2 {
+    background-color: #000;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: center;
+}
